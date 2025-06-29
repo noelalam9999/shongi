@@ -107,21 +107,22 @@ export default function SchedulePage() {
       startTime = setHours(startTime, now.getHours());
       startTime.setMinutes(nextHalfHour);
     } else {
-      startTime = setHours(startTime, 10);
+      startTime = setHours(startTime, 0); // Start from midnight
     }
 
-    const earliestStart = setHours(startOfDay(selectedDate || now), 10);
-    const latestStart = setHours(
+    const earliestStart = setHours(startOfDay(selectedDate || now), 0); // Midnight
+    let latestStart = setHours(
       startOfDay(selectedDate || now),
-      22 - parseInt(duration as string),
+      23
     );
+    latestStart = new Date(latestStart.setMinutes(30)); // 23:30 is the last slot
 
     for (let i = 0; i < 48; i++) {
       const time = addMinutes(startTime, i * 30);
       if (
         !isAfter(time, latestStart) &&
         !isBefore(time, earliestStart) &&
-        !isBefore(time, now) // Only allow times after current time for today
+        (!isBefore(time, now) || !isSameDay(selectedDate || now, now)) // Only allow times after current time for today
       ) {
         timeOptions.push(format(time, 'HH:mm'));
       }

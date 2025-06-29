@@ -28,6 +28,18 @@ const AppointmentDetails: React.FC<AppointmentDetailsProps> = () => {
         : '100',
     ) / 100;
 
+  const price = appointment.price as number;
+  const platformFee = 30;
+  const vat = price * 0.15;
+  const payNow =
+    payment_amount_in_percent === 0
+      ? 0
+      : price * payment_amount_in_percent + platformFee + vat;
+  const payAfter =
+    payment_amount_in_percent === 0
+      ? price * (1 - payment_amount_in_percent) + platformFee + vat
+      : price * (1 - payment_amount_in_percent);
+
   return (
     <div className="w-full mt-4 ">
       <Box className="">
@@ -95,28 +107,17 @@ const AppointmentDetails: React.FC<AppointmentDetailsProps> = () => {
           </p>
         </Flex>
         <Flex justify={'between'} className="mt-5">
-          {' '}
           <p className="font-poppins font-bold text-gray-400">Pay Now</p>
           <p className="font-poppins font-bold">
-            {(
-              (appointment.price as number) * payment_amount_in_percent +
-              30 +
-              (appointment.price as number) * 0.15
-            ).toFixed(2)}{' '}
-            Tk
+            {payNow.toFixed(2)} Tk
           </p>
         </Flex>
         <Flex justify={'between'} className="mt-5">
-          {' '}
           <p className="font-poppins font-bold text-gray-400">
             Pay After Service
           </p>
           <p className="font-poppins font-bold">
-            {(
-              (appointment.price as number) *
-              (1 - payment_amount_in_percent)
-            ).toFixed(2)}{' '}
-            Tk
+            {payAfter.toFixed(2)} Tk
           </p>
         </Flex>
       </Box>
